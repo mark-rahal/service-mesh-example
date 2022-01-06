@@ -1,0 +1,60 @@
+version: '3.8'
+networks:
+  meshnet:
+    driver: bridge
+services:
+  consul:
+    container_name: consul
+    image: consul:latest
+    networks:
+      - meshnet
+    ports:
+      - '8500:8500'
+      - '8502:8502'
+    volumes:
+      - './server.hcl:/etc/consul.d/server.hcl:ro'
+    command:
+      [
+        'consul',
+        'agent',
+        '-server',
+        '-config-dir',
+        '/etc/consul.d'
+      ]
+  api:
+    container_name: api
+    image: node:latest
+    networks:
+      - meshnet
+    ports:
+      - '3000:3000'
+      - '3001'
+    volumes:
+      - 'C:\Users\mark\Desktop\service-mesh\api-service:/app:rw'
+    working_dir: /app
+    command: [ 'yarn', 'start' ]
+  api_envoy:
+    container_name: api_envoy
+    build: ./envoy
+    network_mode: service:api
+    environment:
+      - CONSUL_ADDR=consul
+      - SERVICE=api
+  image:
+    container_name: image
+    image: node:latest
+    networks:
+      - meshnet
+    ports:
+      - '3001'
+    volumes:
+      - 'C:\Users\mark\Desktop\service-mesh\image-service:/app:rw'
+    working_dir: /app
+    command: [ 'yarn', 'start' ]
+  image_envoy:
+    container_name: image_envoy
+    build: ./envoy
+    network_mode: service:image
+    environment:
+      - CONSUL_ADDR=consul
+      - SERVICE=image

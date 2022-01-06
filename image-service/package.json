@@ -1,0 +1,17 @@
+{
+  "name": "image",
+  "version": "1.0.0",
+  "main": "build/app.js",
+  "license": "MIT",
+  "scripts": {
+    "start": "node build/app.js"
+  },
+  "devDependencies": {
+    "@types/consul": "^0.40.0",
+    "nodemon": "^2.0.15"
+  },
+  "dependencies": {
+    "consul": "^0.40.0",
+    "express": "^4.17.2"
+  }
+}
